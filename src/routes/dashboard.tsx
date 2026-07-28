@@ -37,6 +37,7 @@ import { toast } from "sonner";
 import { useReducedMotion } from "framer-motion";
 
 import { CountUp } from "@/components/CountUp";
+import { cn } from "@/lib/utils";
 
 import { AppShell, CardHeading, SectionCard } from "@/components/chrome/AppShell";
 import { Badge } from "@/components/ui/badge";
