@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { CountUp } from "@/components/CountUp";
 import { AppShell, CardHeading, SectionCard } from "@/components/chrome/AppShell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -226,8 +227,8 @@ function Settings() {
           <SectionCard>
             <CardHeading title="Privacy score" hint="Higher means less is captured" />
             <div className="flex items-center gap-4">
-              <span className="text-4xl font-semibold tracking-tight">
-                {Math.max(0, Math.min(100, privacyScore))}
+              <span className="text-4xl font-bold tracking-tight text-foreground">
+                <CountUp value={Math.max(0, Math.min(100, privacyScore))} />
               </span>
               <Badge variant="secondary" className="rounded-md text-[11px]">
                 {privacyScore >= 75

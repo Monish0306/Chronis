@@ -71,7 +71,7 @@ export function OnboardingLayout({
   children: ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       <TopNav />
       <div className="relative">
         <div
@@ -86,12 +86,12 @@ export function OnboardingLayout({
             transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
             className="mx-auto mt-10 max-w-3xl text-center"
           >
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/70 px-3 py-1 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-secondary/70 px-3 py-1 text-[10px] font-medium tracking-wide text-muted-foreground uppercase">
               <Lock className="size-3" />
               {eyebrow}
             </span>
-            <h1 className="mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h1>
-            <p className="mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+            <h1 className="mt-4 text-3xl font-bold tracking-tight text-foreground">{title}</h1>
+            <p className="mx-auto mt-3 max-w-xl text-base font-medium leading-relaxed text-muted-foreground">
               {description}
             </p>
           </motion.div>

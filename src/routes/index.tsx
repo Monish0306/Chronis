@@ -72,7 +72,7 @@ const STATS = [
 
 function Welcome() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-transparent">
       <TopNav />
       <div className="relative overflow-hidden">
         <div
@@ -86,14 +86,14 @@ function Welcome() {
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             className="mx-auto max-w-3xl text-center"
           >
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-muted-foreground shadow-soft">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-background px-3 py-1 text-[10px] font-medium text-muted-foreground shadow-soft">
               <Sparkles className="size-3.5 text-brand" />
               Private memory infrastructure
             </span>
-            <h1 className="mt-6 text-4xl font-semibold leading-[1.08] tracking-tight sm:text-6xl">
+            <h1 className="mt-6 text-4xl font-bold leading-[1.08] tracking-tight sm:text-6xl">
               Your memory, <span className="brand-gradient-text">remembered privately</span>
             </h1>
-            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+            <p className="mx-auto mt-5 max-w-xl text-base font-medium leading-relaxed text-muted-foreground">
               Chronis turns the signals of your day into a searchable personal memory — sealed
               inside a vault only you can open.
             </p>

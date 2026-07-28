@@ -14,6 +14,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { OnboardingProvider } from "../lib/onboarding";
 import { ChronisProvider } from "../lib/chronis";
 import { Toaster } from "../components/ui/sonner";
+import { PremiumBackground } from "../components/PremiumBackground";
+
 
 function NotFoundComponent() {
   return (
@@ -131,6 +133,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <OnboardingProvider>
         <ChronisProvider>
+          <PremiumBackground />
           {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
           <Toaster position="top-center" richColors closeButton />

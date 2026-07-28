@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, animate, motion } from "framer-motion";
 import {
   Activity,
   BatteryMedium,
@@ -34,6 +34,9 @@ import {
   YAxis,
 } from "recharts";
 import { toast } from "sonner";
+import { useReducedMotion } from "framer-motion";
+
+import { CountUp } from "@/components/CountUp";
 
 import { AppShell, CardHeading, SectionCard } from "@/components/chrome/AppShell";
 import { Badge } from "@/components/ui/badge";
@@ -96,6 +99,25 @@ const chartTooltip = {
     background: "var(--background)",
   },
 } as const;
+
+function CountUpLarge({ value }: { value: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      setDisplayValue(value);
+      return;
+    }
+    const controls = animate(0, value, {
+      duration: 1.2,
+      ease: [0.22, 1, 0.36, 1],
+      onUpdate: (latest) => setDisplayValue(Math.round(latest)),
+    });
+    return () => controls.stop();
+  }, [value, shouldReduceMotion]);
+
+  return <span>{displayValue.toLocaleString()}</span>;
+}
 
 function Dashboard() {
   const { app, update } = useChronis();
@@ -206,29 +228,38 @@ function Dashboard() {
           ].map((s, i) => (
             <motion.div
               key={s.label}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05, duration: 0.35 }}
-              className="surface-card p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lift"
+              initial={{ opacity: 0, y: 12, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ delay: i * 0.05, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="surface-card p-4 bg-card/70 backdrop-blur-md border border-border/60 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-[1.015] hover:shadow-lift"
             >
               <div className="flex items-center justify-between">
-                <s.icon className="size-4 text-muted-foreground" />
-                <span
-                  className={
+                <s.icon className="size-4 text-muted-foreground animate-pulse" style={{ animationDuration: "3s" }} />
+                <motion.span
+                  animate={s.tone !== "muted" ? { scale: [1, 1.4, 1], opacity: [1, 0.6, 1] } : {}}
+                  transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                  className={cn(
+                    "size-2 rounded-full",
                     s.tone === "success"
-                      ? "size-2 rounded-full bg-success"
+                      ? "bg-success"
                       : s.tone === "warning"
-                        ? "size-2 rounded-full bg-warning"
+                        ? "bg-warning"
                         : s.tone === "brand"
-                          ? "size-2 rounded-full bg-brand"
-                          : "size-2 rounded-full bg-border"
-                  }
+                          ? "bg-brand"
+                          : "bg-border"
+                  )}
                 />
               </div>
-              <p className="mt-3 text-[11px] uppercase tracking-wide text-muted-foreground">
+              <p className="mt-3 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
                 {s.label}
               </p>
-              <p className="mt-1 text-body font-semibold">{s.value}</p>
+              <p className="mt-1 text-base font-bold text-foreground">
+                {s.label === "Battery" ? (
+                  <CountUp value={DEVICE.battery} suffix="%" />
+                ) : (
+                  s.value
+                )}
+              </p>
               <p className="mt-0.5 text-xs text-muted-foreground">{s.hint}</p>
             </motion.div>
           ))}
@@ -461,18 +492,42 @@ function Dashboard() {
             <SectionCard className="lg:col-span-2">
               <CardHeading title="Today's stats" hint="Live from your paired band" />
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                {TODAY_STATS.map((s) => (
-                  <div
-                    key={s.label}
-                    className="rounded-lg border border-border bg-secondary/40 p-4"
-                  >
-                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
-                      {s.label}
-                    </p>
-                    <p className="mt-1.5 text-xl font-semibold tracking-tight">{s.value}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{s.delta}</p>
-                  </div>
-                ))}
+                {TODAY_STATS.map((s) => {
+                  const numValue = parseInt(s.value.replace(/[^0-9]/g, ""), 10);
+                  const isNumeric = !isNaN(numValue);
+                  const suffix = s.value.includes("%")
+                    ? "%"
+                    : s.value.includes("m") && !s.value.includes("bpm")
+                      ? " m"
+                      : s.value.includes("kcal")
+                        ? " kcal"
+                        : s.value.includes("bpm")
+                          ? " bpm"
+                          : "";
+                  const isLarge = numValue > 999 && s.value.includes(",");
+                  return (
+                    <div
+                      key={s.label}
+                      className="rounded-lg border border-border bg-secondary/40 p-4 transition-all duration-300 hover:bg-secondary/60 hover:-translate-y-0.5"
+                    >
+                      <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                        {s.label}
+                      </p>
+                      <p className="mt-1.5 text-xl font-bold tracking-tight text-foreground">
+                        {isNumeric ? (
+                          isLarge ? (
+                            <CountUpLarge value={numValue} />
+                          ) : (
+                            <CountUp value={numValue} suffix={suffix} />
+                          )
+                        ) : (
+                          s.value
+                        )}
+                      </p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">{s.delta}</p>
+                    </div>
+                  );
+                })}
               </div>
             </SectionCard>
 
@@ -482,9 +537,11 @@ function Dashboard() {
               <div className="space-y-4">
                 {WELLNESS.map((w) => (
                   <div key={w.label}>
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium">{w.label}</span>
-                      <span className="text-muted-foreground">{w.value}%</span>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-medium text-foreground">{w.label}</span>
+                      <span className="text-muted-foreground font-semibold">
+                        <CountUp value={w.value} suffix="%" />
+                      </span>
                     </div>
                     <Progress value={w.value} className="mt-1.5 h-1.5" />
                     <p className="mt-1 text-xs text-muted-foreground">{w.note}</p>
@@ -799,9 +856,9 @@ function Ring({ value }: { value: number }) {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         />
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
-        {value}%
-      </span>
+      <div className="absolute inset-0 flex items-center justify-center text-sm font-semibold">
+        <CountUp value={value} suffix="%" />
+      </div>
     </div>
   );
 }

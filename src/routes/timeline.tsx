@@ -172,8 +172,11 @@ function Timeline() {
               </div>
             ) : (
               <ol className="relative mt-4 space-y-3 pl-6">
-                <span
-                  className="absolute left-[7px] top-2 h-[calc(100%-1rem)] w-px bg-border"
+                <motion.span
+                  initial={{ scaleY: 0 }}
+                  animate={{ scaleY: 1 }}
+                  transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+                  className="absolute left-[7px] top-2 h-[calc(100%-1rem)] w-px bg-border origin-top"
                   aria-hidden
                 />
                 {filtered.map((m, idx) => {
@@ -182,9 +185,14 @@ function Timeline() {
                   return (
                     <motion.li
                       key={m.id}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: Math.min(idx * 0.04, 0.3), duration: 0.35 }}
+                      initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{
+                        delay: Math.min(idx * 0.05, 0.4),
+                        type: "spring",
+                        stiffness: 260,
+                        damping: 24,
+                      }}
                       className="relative"
                     >
                       <span
@@ -197,7 +205,7 @@ function Timeline() {
                         }
                         aria-hidden
                       />
-                      <div className="surface-card p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lift">
+                      <div className="surface-card p-4 bg-card/75 backdrop-blur-sm border border-border/50 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:scale-[1.012] hover:shadow-lift">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

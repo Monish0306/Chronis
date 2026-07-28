@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useChronis, DEVICE } from "@/lib/chronis";
 import { ShieldCheck, AlertTriangle, XCircle, RotateCw } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { motion } from "framer-motion";
 
 export function StatusIndicator() {
   const { app } = useChronis();
@@ -43,7 +44,11 @@ export function StatusIndicator() {
           >
             <span className="relative flex size-2">
               {!isPaused && !allSignalsOff && (
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-success opacity-75" />
+                <motion.span
+                  animate={{ scale: [1, 1.8, 1], opacity: [0.6, 0, 0.6] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                  className={`absolute inset-0 rounded-full ${dotColor}`}
+                />
               )}
               <span className={`relative inline-flex size-2 rounded-full ${dotColor}`} />
             </span>
